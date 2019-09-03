@@ -2,6 +2,7 @@ package org.springframework.security.boot;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.security.boot.biz.property.SecurityLogoutProperties;
 import org.springframework.security.boot.yiban.SecurityYibanAuthcProperties;
 
 @ConfigurationProperties(prefix = SecurityYibanProperties.PREFIX)
@@ -13,7 +14,9 @@ public class SecurityYibanProperties {
 	private boolean enabled = false;
 	@NestedConfigurationProperty
 	private SecurityYibanAuthcProperties authc = new SecurityYibanAuthcProperties();
-
+	@NestedConfigurationProperty
+	private SecurityLogoutProperties logout = new SecurityLogoutProperties();
+	
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -28,6 +31,14 @@ public class SecurityYibanProperties {
 
 	public void setAuthc(SecurityYibanAuthcProperties authc) {
 		this.authc = authc;
+	}
+
+	public SecurityLogoutProperties getLogout() {
+		return logout;
+	}
+
+	public void setLogout(SecurityLogoutProperties logout) {
+		this.logout = logout;
 	}
 
 }

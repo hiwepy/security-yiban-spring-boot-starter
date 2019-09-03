@@ -35,64 +35,18 @@ import cn.yiban.open.Authorize;
 @ConditionalOnWebApplication
 @ConditionalOnProperty(prefix = SecurityYibanProperties.PREFIX, value = "enabled", havingValue = "true")
 @EnableConfigurationProperties({ SecurityYibanProperties.class, SecurityBizProperties.class, ServerProperties.class })
-public class SecurityYibanFilterConfiguration implements ApplicationEventPublisherAware {
-
-
-	private ApplicationEventPublisher eventPublisher;
-	
-	@Autowired
-	private SecurityBizProperties bizProperties;
-	@Autowired
-	private SecurityYibanProperties yibanProperties;
-	@Autowired
-	private AuthenticationManager authenticationManager; 
-	@Autowired
-	private RememberMeServices rememberMeServices;
-	@Autowired
-	private SessionAuthenticationStrategy sessionStrategy;
-	
-	@Bean
-	public YibanPreAuthenticatedProcessingFilter yibanPreAuthenticatedProcessingFilter(Authorize authorize) throws Exception {
-    	
-		YibanPreAuthenticatedProcessingFilter authcFilter = new YibanPreAuthenticatedProcessingFilter( authorize, 
-        		yibanProperties.getAuthc().getCallback(),
-        		yibanProperties.getAuthc().getState(),
-        		yibanProperties.getAuthc().getDisplay());
-		
-        return authcFilter;
-    }
-	
-	@Bean
-	public YibanAuthorizationProcessingFilter yibanAuthorizationProcessingFilter(Authorize authorize,
-			@Qualifier("yibanAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
-				@Qualifier("yibanAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler) throws Exception {
-    	
-		YibanAuthorizationProcessingFilter authcFilter = new YibanAuthorizationProcessingFilter(authorize);
-
-		authcFilter.setAllowSessionCreation(bizProperties.getSessionMgt().isAllowSessionCreation());
-		authcFilter.setApplicationEventPublisher(eventPublisher);
-		authcFilter.setAuthenticationFailureHandler(authenticationFailureHandler.getIfAvailable());
-		authcFilter.setAuthenticationManager(authenticationManager);
-		authcFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler.getIfAvailable());
-		authcFilter.setContinueChainBeforeSuccessfulAuthentication(yibanProperties.getAuthc().isContinueChainBeforeSuccessfulAuthentication());
-		
-		if (StringUtils.hasText(yibanProperties.getAuthc().getPathPattern())) {
-			authcFilter.setFilterProcessesUrl(yibanProperties.getAuthc().getPathPattern());
-		}
-		authcFilter.setRememberMeServices(rememberMeServices);
-		authcFilter.setSessionAuthenticationStrategy(sessionStrategy);
-		
-        return authcFilter;
-    }
-    
-	@Bean
-	public YibanAuthenticationProvider openIDAuthenticationProvider(UserDetailsServiceAdapter userDetailsService) {
-		return new YibanAuthenticationProvider(userDetailsService);
-	}
+public class SecurityYibanFilterConfiguration {
 	
 	@Configuration
 	@EnableConfigurationProperties({ SecurityYibanProperties.class, SecurityBizProperties.class })
 	static class YibanWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+		
+		private AuthenticationManager authenticationManager; 
+		private RememberMeServices rememberMeServices;
+		private SessionAuthenticationStrategy sessionStrategy;
+		
+		private final SecurityBizProperties bizProperties;
+		private final SecurityYibanProperties yibanProperties;
 		
 	    private final YibanAuthorizationProcessingFilter yibanAuthorizationProcessingFilter;
 		private final YibanPreAuthenticatedProcessingFilter yibanPreAuthenticatedProcessingFilter;
@@ -100,11 +54,11 @@ public class SecurityYibanFilterConfiguration implements ApplicationEventPublish
 	    private final PostRequestAuthenticationSuccessHandler authenticationSuccessHandler;
 	    private final PostRequestAuthenticationFailureHandler authenticationFailureHandler;
 		private final UserDetailsServiceAdapter authcUserDetailsService;
-		private final SecurityYibanProperties properties;
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
-	
+		
 		public YibanWebSecurityConfigurerAdapter(
-				SecurityYibanProperties properties,
+				SecurityBizProperties bizProperties,
+				SecurityYibanProperties yibanProperties,
 				ObjectProvider<YibanAuthorizationProcessingFilter> yibanAuthorizationProcessingFilter,
 				ObjectProvider<YibanPreAuthenticatedProcessingFilter> yibanPreAuthenticatedProcessingFilter,
 				ObjectProvider<YibanAuthenticationProvider> yibanAuthenticationProvider,
@@ -113,7 +67,8 @@ public class SecurityYibanFilterConfiguration implements ApplicationEventPublish
    				@Qualifier("jwtAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
 				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider) {
 			
-			this.properties = properties;
+			this.bizProperties = bizProperties;
+			this.yibanProperties = yibanProperties;
 			this.yibanAuthorizationProcessingFilter = yibanAuthorizationProcessingFilter.getIfAvailable();
 			this.yibanPreAuthenticatedProcessingFilter = yibanPreAuthenticatedProcessingFilter.getIfAvailable();
 			this.yibanAuthenticationProvider = yibanAuthenticationProvider.getIfAvailable();
@@ -123,6 +78,40 @@ public class SecurityYibanFilterConfiguration implements ApplicationEventPublish
 			this.sessionAuthenticationStrategy = sessionAuthenticationStrategyProvider.getIfAvailable();
 		}
 
+		@Bean
+		public YibanPreAuthenticatedProcessingFilter yibanPreAuthenticatedProcessingFilter(Authorize yibanAuthorize) throws Exception {
+	    	
+			YibanPreAuthenticatedProcessingFilter authcFilter = new YibanPreAuthenticatedProcessingFilter( yibanAuthorize, 
+	        		yibanProperties.getAuthc().getCallback(),
+	        		yibanProperties.getAuthc().getState(),
+	        		yibanProperties.getAuthc().getDisplay());
+			
+	        return authcFilter;
+	    }
+		
+		@Bean
+		public YibanAuthorizationProcessingFilter yibanAuthorizationProcessingFilter(Authorize yibanAuthorize,
+				@Qualifier("yibanAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
+				@Qualifier("yibanAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler) throws Exception {
+	    	
+			YibanAuthorizationProcessingFilter authcFilter = new YibanAuthorizationProcessingFilter(yibanAuthorize);
+
+			authcFilter.setAllowSessionCreation(bizProperties.getSessionMgt().isAllowSessionCreation());
+			authcFilter.setApplicationEventPublisher(eventPublisher);
+			authcFilter.setAuthenticationFailureHandler(authenticationFailureHandler.getIfAvailable());
+			authcFilter.setAuthenticationManager(authenticationManager);
+			authcFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler.getIfAvailable());
+			authcFilter.setContinueChainBeforeSuccessfulAuthentication(yibanProperties.getAuthc().isContinueChainBeforeSuccessfulAuthentication());
+			
+			if (StringUtils.hasText(yibanProperties.getAuthc().getLoginUrl())) {
+				authcFilter.setFilterProcessesUrl(yibanProperties.getAuthc().getLoginUrl());
+			}
+			authcFilter.setRememberMeServices(rememberMeServices);
+			authcFilter.setSessionAuthenticationStrategy(sessionStrategy);
+			
+	        return authcFilter;
+	    }
+		
 	    @Override
 	    protected void configure(AuthenticationManagerBuilder auth) {
 	        auth.authenticationProvider(yibanAuthenticationProvider);
@@ -135,11 +124,6 @@ public class SecurityYibanFilterConfiguration implements ApplicationEventPublish
 			
 		}
 
-	}
-	
-	@Override
-	public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-		this.eventPublisher = applicationEventPublisher;
 	}
 	
 }

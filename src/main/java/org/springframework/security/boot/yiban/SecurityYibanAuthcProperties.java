@@ -34,7 +34,6 @@ public class SecurityYibanAuthcProperties {
 	 * 接入应用 APPID
 	 */
 	private String appKey;
-
 	/**
 	 * 接入应用的 AppSecret
 	 */
@@ -44,15 +43,21 @@ public class SecurityYibanAuthcProperties {
 	private String redirect_uri;
 	private String state = "QUERY";
 
+	/** 登录地址：会话不存在时访问的地址 */
+	private String loginUrl = YibanAuthorizationProcessingFilter.AUTHORIZATION_PATH;
+	/** 重定向地址：会话注销后的重定向地址 */
+	private String redirectUrl = "/";
+	/** 系统主页：登录成功后跳转路径 */
+	private String successUrl = "/index";;
+	/** 未授权页面：无权限时的跳转路径 */
+	private String unauthorizedUrl = "/error";
+	/** 异常页面：认证失败时的跳转路径 */
+	private String failureUrl = "/error";
+
 	private Authorize.DISPLAY_TAG_T display = Authorize.DISPLAY_TAG_T.WEB;
 
 	private String authorizationParamName = YibanAuthorizationProcessingFilter.AUTHORIZATION_PARAM;
 
-	private boolean allowSessionCreation = false;
-	
-	/** Authorization Path Pattern */
-	private String pathPattern = YibanAuthorizationProcessingFilter.AUTHORIZATION_PARAM;
-	
 	private String[] ignorePatterns = new String[] { YibanAuthorizationProcessingFilter.AUTHORIZATION_PARAM };
 
 	/**
@@ -62,5 +67,6 @@ public class SecurityYibanAuthcProperties {
 	 * Defaults to <code>false</code>.
 	 */
 	private boolean continueChainBeforeSuccessfulAuthentication = true;
+	private boolean useForward = false;
 	
 }
