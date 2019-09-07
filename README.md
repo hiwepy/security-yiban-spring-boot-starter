@@ -6,6 +6,8 @@ security starter for spring boot
 
  > 基于 Security 的 Spring Boot Starter 实现
 
+https://open.yiban.cn/wiki/index.php
+
 1. 默认的Handler实现
 2. 实现基于责任链式的消息分发
 

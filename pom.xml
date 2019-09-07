@@ -506,7 +506,7 @@
 			<groupId>com.github.vindell</groupId>
 			<artifactId>spring-boot-starter-security-biz</artifactId>
 		</dependency>
-		
+		                          
 		<dependency>
 			<groupId>cn.yiban.open</groupId>
 			<artifactId>java-sdk</artifactId>
