@@ -97,7 +97,6 @@ public class SecurityYibanFilterConfiguration {
 			YibanAuthorizationProcessingFilter authcFilter = new YibanAuthorizationProcessingFilter(yibanAuthorize);
 
 			authcFilter.setAllowSessionCreation(bizProperties.getSessionMgt().isAllowSessionCreation());
-			authcFilter.setApplicationEventPublisher(eventPublisher);
 			authcFilter.setAuthenticationFailureHandler(authenticationFailureHandler.getIfAvailable());
 			authcFilter.setAuthenticationManager(authenticationManager);
 			authcFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler.getIfAvailable());
