@@ -90,7 +90,7 @@ public class SecurityYibanFilterConfiguration {
 	    }
 		
 		@Bean
-		public YibanAuthorizationProcessingFilter yibanAuthorizationProcessingFilter(Authorize yibanAuthorize,
+		public YibanAuthorizationProcessingFilter authenticationProcessingFilter(Authorize yibanAuthorize,
 				@Qualifier("yibanAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
 				@Qualifier("yibanAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler) throws Exception {
 	    	
