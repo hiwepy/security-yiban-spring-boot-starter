@@ -1,5 +1,7 @@
 package org.springframework.security.boot;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -10,6 +12,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationFailureHandler;
 import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationSuccessHandler;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
@@ -46,7 +49,7 @@ public class SecurityYibanFilterConfiguration {
 		
 	    private final YibanAuthorizationProcessingFilter yibanAuthorizationProcessingFilter;
 		private final YibanPreAuthenticatedProcessingFilter yibanPreAuthenticatedProcessingFilter;
-	    private final YibanAuthenticationProvider yibanAuthenticationProvider;
+	    private final YibanAuthenticationProvider authenticationProvider;
 	    private final PostRequestAuthenticationSuccessHandler authenticationSuccessHandler;
 	    private final PostRequestAuthenticationFailureHandler authenticationFailureHandler;
 		private final UserDetailsServiceAdapter authcUserDetailsService;
@@ -69,13 +72,22 @@ public class SecurityYibanFilterConfiguration {
 			this.yibanProperties = yibanProperties;
 			this.yibanAuthorizationProcessingFilter = yibanAuthorizationProcessingFilter.getIfAvailable();
 			this.yibanPreAuthenticatedProcessingFilter = yibanPreAuthenticatedProcessingFilter.getIfAvailable();
-			this.yibanAuthenticationProvider = yibanAuthenticationProvider.getIfAvailable();
+			this.authenticationProvider = yibanAuthenticationProvider.getIfAvailable();
 			this.authcUserDetailsService = authcUserDetailsService.getIfAvailable();
 			this.authenticationSuccessHandler = authenticationSuccessHandler.getIfAvailable();
    			this.authenticationFailureHandler = authenticationFailureHandler.getIfAvailable();
 			this.sessionAuthenticationStrategy = sessionAuthenticationStrategyProvider.getIfAvailable();
 		}
-
+		
+		@Override
+		public AuthenticationManager authenticationManagerBean() throws Exception {
+   			AuthenticationManager parentManager = authenticationManager == null ? super.authenticationManagerBean() : authenticationManager;
+			ProviderManager authenticationManager = new ProviderManager( Arrays.asList(authenticationProvider), parentManager);
+			// 不擦除认证密码，擦除会导致TokenBasedRememberMeServices因为找不到Credentials再调用UserDetailsService而抛出UsernameNotFoundException
+			authenticationManager.setEraseCredentialsAfterAuthentication(false);
+			return authenticationManager;
+		}
+		
 		@Bean
 		public YibanPreAuthenticatedProcessingFilter yibanPreAuthenticatedProcessingFilter(Authorize yibanAuthorize) throws Exception {
 	    	
@@ -111,7 +123,7 @@ public class SecurityYibanFilterConfiguration {
 		
 	    @Override
 	    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-	        auth.authenticationProvider(yibanAuthenticationProvider);
+	        auth.authenticationProvider(authenticationProvider);
 	        super.configure(auth);
 	    }
 		
