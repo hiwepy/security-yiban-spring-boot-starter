@@ -1,15 +1,12 @@
 package org.springframework.security.boot;
 
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +19,6 @@ import org.springframework.security.boot.yiban.authentication.YibanAuthorization
 import org.springframework.security.boot.yiban.authentication.YibanPreAuthenticatedProcessingFilter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
@@ -39,7 +35,7 @@ public class SecurityYibanFilterConfiguration {
 	
 	@Configuration
 	@EnableConfigurationProperties({ SecurityYibanProperties.class, SecurityBizProperties.class })
-	static class YibanWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+	static class YibanWebSecurityConfigurerAdapter extends SecurityBizConfigurerAdapter {
 		
 		private AuthenticationManager authenticationManager; 
 		private RememberMeServices rememberMeServices;
@@ -66,6 +62,8 @@ public class SecurityYibanFilterConfiguration {
 				@Qualifier("jwtAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
    				@Qualifier("jwtAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
 				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider) {
+			
+			super(bizProperties);
 			
 			this.bizProperties = bizProperties;
 			this.yibanProperties = yibanProperties;
@@ -112,8 +110,9 @@ public class SecurityYibanFilterConfiguration {
 	    }
 		
 	    @Override
-	    protected void configure(AuthenticationManagerBuilder auth) {
+	    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 	        auth.authenticationProvider(yibanAuthenticationProvider);
+	        super.configure(auth);
 	    }
 		
 		@Override
