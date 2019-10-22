@@ -13,20 +13,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.security.boot.yiban;
+package org.springframework.security.boot;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.security.boot.SecurityFormProperties;
+import org.springframework.security.boot.biz.property.SecurityAuthcProperties;
+import org.springframework.security.boot.biz.property.SecurityLogoutProperties;
 import org.springframework.security.boot.yiban.authentication.YibanAuthorizationProcessingFilter;
 import org.springframework.security.core.Authentication;
 
 import cn.yiban.open.Authorize;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
-public class SecurityYibanAuthcProperties {
+
+@ConfigurationProperties(SecurityFormProperties.PREFIX)
+@Getter
+@Setter
+@ToString
+public class SecurityYibanAuthcProperties extends SecurityAuthcProperties {
 
 	public static final String PREFIX = "spring.security.yiban.authc";
 
@@ -68,5 +79,8 @@ public class SecurityYibanAuthcProperties {
 	 */
 	private boolean continueChainBeforeSuccessfulAuthentication = true;
 	private boolean useForward = false;
+
+	@NestedConfigurationProperty
+	private SecurityLogoutProperties logout = new SecurityLogoutProperties();
 	
 }

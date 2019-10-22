@@ -1,6 +1,7 @@
 package org.springframework.security.boot;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,19 +13,32 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.boot.biz.authentication.AuthenticatingFailureCounter;
+import org.springframework.security.boot.biz.authentication.AuthenticationListener;
 import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationFailureHandler;
 import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationSuccessHandler;
+import org.springframework.security.boot.biz.authentication.captcha.CaptchaResolver;
+import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationEntryPoint;
+import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationFailureHandler;
+import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationSuccessHandler;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.utils.StringUtils;
 import org.springframework.security.boot.yiban.authentication.YibanAuthenticationProvider;
 import org.springframework.security.boot.yiban.authentication.YibanAuthorizationProcessingFilter;
 import org.springframework.security.boot.yiban.authentication.YibanPreAuthenticatedProcessingFilter;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.session.InvalidSessionStrategy;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.yiban.open.Authorize;
 
@@ -38,95 +52,95 @@ import cn.yiban.open.Authorize;
 public class SecurityYibanFilterConfiguration {
 	
 	@Configuration
-	@EnableConfigurationProperties({ SecurityYibanProperties.class, SecurityBizProperties.class })
+	@EnableConfigurationProperties({ SecurityYibanProperties.class, SecurityYibanAuthcProperties.class, SecurityBizProperties.class })
 	static class YibanWebSecurityConfigurerAdapter extends SecurityBizConfigurerAdapter {
 		
-		private AuthenticationManager authenticationManager; 
-		private RememberMeServices rememberMeServices;
-		private SessionAuthenticationStrategy sessionStrategy;
+		private final SecurityYibanAuthcProperties authcProperties;
 		
-		private final SecurityBizProperties bizProperties;
-		private final SecurityYibanProperties yibanProperties;
-		
-	    private final YibanAuthorizationProcessingFilter yibanAuthorizationProcessingFilter;
-		private final YibanPreAuthenticatedProcessingFilter yibanPreAuthenticatedProcessingFilter;
-	    private final YibanAuthenticationProvider authenticationProvider;
-	    private final PostRequestAuthenticationSuccessHandler authenticationSuccessHandler;
-	    private final PostRequestAuthenticationFailureHandler authenticationFailureHandler;
-		private final UserDetailsServiceAdapter authcUserDetailsService;
+		private final AuthenticatingFailureCounter authenticatingFailureCounter;
+	    private final AuthenticationEntryPoint authenticationEntryPoint;
+	    private final AuthenticationSuccessHandler authenticationSuccessHandler;
+	    private final AuthenticationFailureHandler authenticationFailureHandler;
+	    private final CaptchaResolver captchaResolver;
+	    private final InvalidSessionStrategy invalidSessionStrategy;
+	    private final LogoutHandler logoutHandler;
+	    private final ObjectMapper objectMapper;
+    	private final RequestCache requestCache;
+    	private final RememberMeServices rememberMeServices;
+    	private final SessionRegistry sessionRegistry;
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
+		private final SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
+		private final UserDetailsServiceAdapter authcUserDetailsService;
 		
 		public YibanWebSecurityConfigurerAdapter(
+				
 				SecurityBizProperties bizProperties,
-				SecurityYibanProperties yibanProperties,
-				ObjectProvider<YibanAuthorizationProcessingFilter> yibanAuthorizationProcessingFilter,
-				ObjectProvider<YibanPreAuthenticatedProcessingFilter> yibanPreAuthenticatedProcessingFilter,
-				ObjectProvider<YibanAuthenticationProvider> yibanAuthenticationProvider,
-				ObjectProvider<UserDetailsServiceAdapter> authcUserDetailsService, 
-				ObjectProvider<CsrfTokenRepository> csrfTokenRepositoryProvider,
-				@Qualifier("jwtAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
-   				@Qualifier("jwtAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
-				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider) {
+				SecurityYibanAuthcProperties authcProperties,
+				
+				ObjectProvider<YibanAuthenticationProvider> authenticationProvider,
+   				ObjectProvider<AuthenticationManager> authenticationManagerProvider,
+   				ObjectProvider<AuthenticationListener> authenticationListenerProvider,
+   				ObjectProvider<MatchedAuthenticationEntryPoint> authenticationEntryPointProvider,
+   				ObjectProvider<MatchedAuthenticationSuccessHandler> authenticationSuccessHandlerProvider,
+   				ObjectProvider<MatchedAuthenticationFailureHandler> authenticationFailureHandlerProvider,
+   				ObjectProvider<CaptchaResolver> captchaResolverProvider,
+   				ObjectProvider<LogoutHandler> logoutHandlerProvider,
+   				ObjectProvider<ObjectMapper> objectMapperProvider, 
+				ObjectProvider<UserDetailsServiceAdapter> authcUserDetailsService) {
 			
-			super(bizProperties, csrfTokenRepositoryProvider.getIfAvailable());
+			super(bizProperties, authcProperties, authenticationProvider.stream().collect(Collectors.toList()),
+					authenticationManagerProvider.getIfAvailable());
 			
-			this.bizProperties = bizProperties;
-			this.yibanProperties = yibanProperties;
-			this.yibanAuthorizationProcessingFilter = yibanAuthorizationProcessingFilter.getIfAvailable();
-			this.yibanPreAuthenticatedProcessingFilter = yibanPreAuthenticatedProcessingFilter.getIfAvailable();
-			this.authenticationProvider = yibanAuthenticationProvider.getIfAvailable();
-			this.authcUserDetailsService = authcUserDetailsService.getIfAvailable();
-			this.authenticationSuccessHandler = authenticationSuccessHandler.getIfAvailable();
-   			this.authenticationFailureHandler = authenticationFailureHandler.getIfAvailable();
-			this.sessionAuthenticationStrategy = sessionAuthenticationStrategyProvider.getIfAvailable();
+			this.authcProperties = authcProperties;
+			
+			this.authenticatingFailureCounter = super.authenticatingFailureCounter();
+   			List<AuthenticationListener> authenticationListeners = authenticationListenerProvider.stream().collect(Collectors.toList());
+   			this.authenticationEntryPoint = super.authenticationEntryPoint(authenticationEntryPointProvider.stream().collect(Collectors.toList()));
+   			this.authenticationSuccessHandler = super.authenticationSuccessHandler(authenticationListeners, authenticationSuccessHandlerProvider.stream().collect(Collectors.toList()));
+   			this.authenticationFailureHandler = super.authenticationFailureHandler(authenticationListeners, authenticationFailureHandlerProvider.stream().collect(Collectors.toList()));
+   			this.authcUserDetailsService = authcUserDetailsService.getIfAvailable();
+   			this.captchaResolver = captchaResolverProvider.getIfAvailable();
+   			this.invalidSessionStrategy = super.invalidSessionStrategy();
+   			this.logoutHandler = super.logoutHandler(logoutHandlerProvider.stream().collect(Collectors.toList()));
+   			this.objectMapper = objectMapperProvider.getIfAvailable();
+   			this.requestCache = super.requestCache();
+   			this.rememberMeServices = super.rememberMeServices();
+   			this.sessionRegistry = super.sessionRegistry();
+   			this.sessionAuthenticationStrategy = super.sessionAuthenticationStrategy();
+   			this.sessionInformationExpiredStrategy = super.sessionInformationExpiredStrategy();
 		}
-		
-		@Override
-		public AuthenticationManager authenticationManagerBean() throws Exception {
-   			AuthenticationManager parentManager = authenticationManager == null ? super.authenticationManagerBean() : authenticationManager;
-			ProviderManager authenticationManager = new ProviderManager( Arrays.asList(authenticationProvider), parentManager);
-			// 不擦除认证密码，擦除会导致TokenBasedRememberMeServices因为找不到Credentials再调用UserDetailsService而抛出UsernameNotFoundException
-			authenticationManager.setEraseCredentialsAfterAuthentication(false);
-			return authenticationManager;
-		}
+		 
 		
 		@Bean
 		public YibanPreAuthenticatedProcessingFilter yibanPreAuthenticatedProcessingFilter(Authorize yibanAuthorize) throws Exception {
 	    	
 			YibanPreAuthenticatedProcessingFilter authcFilter = new YibanPreAuthenticatedProcessingFilter( yibanAuthorize, 
-	        		yibanProperties.getAuthc().getCallback(),
-	        		yibanProperties.getAuthc().getState(),
-	        		yibanProperties.getAuthc().getDisplay());
+	        		authcProperties.getCallback(),
+	        		authcProperties.getState(),
+	        		authcProperties.getDisplay());
 			
 	        return authcFilter;
 	    }
 		
-		@Bean
 		public YibanAuthorizationProcessingFilter authenticationProcessingFilter(Authorize yibanAuthorize,
 				@Qualifier("yibanAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
 				@Qualifier("yibanAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler) throws Exception {
 	    	
 			YibanAuthorizationProcessingFilter authcFilter = new YibanAuthorizationProcessingFilter(yibanAuthorize);
 
-			authcFilter.setAllowSessionCreation(bizProperties.getSessionMgt().isAllowSessionCreation());
+			authcFilter.setAllowSessionCreation(authcProperties.getSessionMgt().isAllowSessionCreation());
 			authcFilter.setAuthenticationFailureHandler(authenticationFailureHandler.getIfAvailable());
-			authcFilter.setAuthenticationManager(authenticationManager);
+			authcFilter.setAuthenticationManager(authenticationManagerBean());
 			authcFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler.getIfAvailable());
-			authcFilter.setContinueChainBeforeSuccessfulAuthentication(yibanProperties.getAuthc().isContinueChainBeforeSuccessfulAuthentication());
+			authcFilter.setContinueChainBeforeSuccessfulAuthentication(authcProperties.isContinueChainBeforeSuccessfulAuthentication());
 			
-			if (StringUtils.hasText(yibanProperties.getAuthc().getLoginUrl())) {
-				authcFilter.setFilterProcessesUrl(yibanProperties.getAuthc().getLoginUrl());
+			if (StringUtils.hasText(authcProperties.getLoginUrl())) {
+				authcFilter.setFilterProcessesUrl(authcProperties.getLoginUrl());
 			}
 			authcFilter.setRememberMeServices(rememberMeServices);
-			authcFilter.setSessionAuthenticationStrategy(sessionStrategy);
+			authcFilter.setSessionAuthenticationStrategy(sessionAuthenticationStrategy);
 			
 	        return authcFilter;
-	    }
-		
-	    @Override
-	    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-	        auth.authenticationProvider(authenticationProvider);
-	        super.configure(auth);
 	    }
 		
 		@Override
