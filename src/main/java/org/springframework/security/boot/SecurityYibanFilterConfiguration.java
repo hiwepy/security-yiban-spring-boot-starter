@@ -24,6 +24,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import cn.yiban.open.Authorize;
 
@@ -62,11 +64,13 @@ public class SecurityYibanFilterConfiguration {
 				ObjectProvider<YibanPreAuthenticatedProcessingFilter> yibanPreAuthenticatedProcessingFilter,
 				ObjectProvider<YibanAuthenticationProvider> yibanAuthenticationProvider,
 				ObjectProvider<UserDetailsServiceAdapter> authcUserDetailsService, 
+				ObjectProvider<CsrfTokenRepository> csrfTokenRepositoryProvider,
+   				ObjectProvider<CorsConfigurationSource> configurationSourceProvider,
 				@Qualifier("jwtAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
    				@Qualifier("jwtAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
 				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider) {
 			
-			super(bizProperties);
+			super(bizProperties, csrfTokenRepositoryProvider.getIfAvailable(), configurationSourceProvider.getIfAvailable());
 			
 			this.bizProperties = bizProperties;
 			this.yibanProperties = yibanProperties;
@@ -129,8 +133,11 @@ public class SecurityYibanFilterConfiguration {
 		
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			
-			
+
+   	    	//super.configure(http, authcProperties.getCros());
+   	    	//super.configure(http, authcProperties.getCsrf());
+   	    	//super.configure(http, authcProperties.getHeaders());
+	    	super.configure(http);
 			
 		}
 
