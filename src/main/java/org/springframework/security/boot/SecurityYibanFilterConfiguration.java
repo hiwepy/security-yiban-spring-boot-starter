@@ -25,7 +25,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import cn.yiban.open.Authorize;
 
@@ -65,12 +64,11 @@ public class SecurityYibanFilterConfiguration {
 				ObjectProvider<YibanAuthenticationProvider> yibanAuthenticationProvider,
 				ObjectProvider<UserDetailsServiceAdapter> authcUserDetailsService, 
 				ObjectProvider<CsrfTokenRepository> csrfTokenRepositoryProvider,
-   				ObjectProvider<CorsConfigurationSource> configurationSourceProvider,
 				@Qualifier("jwtAuthenticationSuccessHandler") ObjectProvider<PostRequestAuthenticationSuccessHandler> authenticationSuccessHandler,
    				@Qualifier("jwtAuthenticationFailureHandler") ObjectProvider<PostRequestAuthenticationFailureHandler> authenticationFailureHandler,
 				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider) {
 			
-			super(bizProperties, csrfTokenRepositoryProvider.getIfAvailable(), configurationSourceProvider.getIfAvailable());
+			super(bizProperties, csrfTokenRepositoryProvider.getIfAvailable());
 			
 			this.bizProperties = bizProperties;
 			this.yibanProperties = yibanProperties;
