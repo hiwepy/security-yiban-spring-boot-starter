@@ -1,4 +1,4 @@
-# spring-boot-starter-security-yiban
+# security-yiban-spring-boot-starter
 security starter for spring boot
 
 ### 说明
@@ -16,7 +16,7 @@ https://open.yiban.cn/wiki/index.php
 ``` xml
 <dependency>
 	<groupId>${project.groupId}</groupId>
-	<artifactId>spring-boot-starter-security-yiban</artifactId>
+	<artifactId>security-yiban-spring-boot-starter</artifactId>
 	<version>${project.version}</version>
 </dependency>
 ```
