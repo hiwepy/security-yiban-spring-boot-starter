@@ -374,16 +374,16 @@
         <maven-surefire-plugin.vertsion>2.22.1</maven-surefire-plugin.vertsion>
 		<maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
 		<yiban-sdk.version>1.6.0</yiban-sdk.version>
-		<spring-boot-starter-security-biz.version>1.0.0-SNAPSHOT</spring-boot-starter-security-biz.version>
+		<security-biz-spring-boot-starter.version>1.0.0-SNAPSHOT</security-biz-spring-boot-starter.version>
 	</properties>
 	
 	<dependencyManagement>
 		<dependencies>
-			<!-- https://github.com/hiwepy/spring-boot-starter-security-biz -->
+			<!-- https://github.com/hiwepy/security-biz-spring-boot-starter -->
 			<dependency>
 				<groupId>com.github.hiwepy</groupId>
-				<artifactId>spring-boot-starter-security-biz</artifactId>
-				<version>${spring-boot-starter-security-biz.version}</version>
+				<artifactId>security-biz-spring-boot-starter</artifactId>
+				<version>${security-biz-spring-boot-starter.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>cn.yiban.open</groupId>
@@ -501,10 +501,10 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 	 
-		<!-- https://github.com/hiwepy/spring-boot-starter-security-biz -->
+		<!-- https://github.com/hiwepy/security-biz-spring-boot-starter -->
 		<dependency>
 			<groupId>com.github.hiwepy</groupId>
-			<artifactId>spring-boot-starter-security-biz</artifactId>
+			<artifactId>security-biz-spring-boot-starter</artifactId>
 		</dependency>
 		                          
 		<dependency>
