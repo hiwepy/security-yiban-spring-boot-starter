@@ -53,7 +53,7 @@ public class SecurityYibanFilterConfiguration {
 	
 	@Configuration
 	@EnableConfigurationProperties({ SecurityYibanProperties.class, SecurityYibanAuthcProperties.class, SecurityBizProperties.class })
-	static class YibanWebSecurityConfigurerAdapter extends AbstractSecurityConfigurerAdapter {
+	static class YibanWebSecurityConfigurerAdapter extends WebSecurityBizConfigurerAdapter {
 		
 		private final SecurityYibanAuthcProperties authcProperties;
 		
