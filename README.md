@@ -17,7 +17,7 @@ https://open.yiban.cn/wiki/index.php
 <dependency>
 	<groupId>${project.groupId}</groupId>
 	<artifactId>security-yiban-spring-boot-starter</artifactId>
-	<version>${project.version}</version>
+	<version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
