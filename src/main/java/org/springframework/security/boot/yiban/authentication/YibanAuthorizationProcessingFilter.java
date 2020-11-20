@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.boot.biz.authentication.PostOnlyAuthenticationProcessingFilter;
 import org.springframework.security.boot.biz.exception.AuthenticationTokenNotFoundException;
 import org.springframework.security.boot.utils.StringUtils;
 import org.springframework.security.core.Authentication;
@@ -47,7 +48,7 @@ import cn.yiban.open.Authorize;
  * 
  * @author ： <a href="https://github.com/hiwepy">hiwepy</a>
  */
-public class YibanAuthorizationProcessingFilter extends AbstractAuthenticationProcessingFilter {
+public class YibanAuthorizationProcessingFilter extends PostOnlyAuthenticationProcessingFilter {
 	
 	public static final String AUTHORIZATION_PATH = "/login/yiban";
 	public static final String AUTHORIZATION_PARAM = "code";
@@ -139,7 +140,7 @@ public class YibanAuthorizationProcessingFilter extends AbstractAuthenticationPr
 	}
 	
 	@Override
-	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+	public Authentication doAttemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException, IOException, ServletException {
 
 		String code = request.getParameter(getAuthorizationParamName());;

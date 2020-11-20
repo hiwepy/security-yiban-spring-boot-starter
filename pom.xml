@@ -374,7 +374,7 @@
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 		<maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
 		<yiban-sdk.version>1.6.0</yiban-sdk.version>
-		<security-biz-spring-boot-starter.version>1.0.0-SNAPSHOT</security-biz-spring-boot-starter.version>
+		<spring-security-biz.version>1.0.4-SNAPSHOT</spring-security-biz.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -383,7 +383,7 @@
 			<dependency>
 				<groupId>com.github.hiwepy</groupId>
 				<artifactId>security-biz-spring-boot-starter</artifactId>
-				<version>${security-biz-spring-boot-starter.version}</version>
+				<version>${spring-security-biz.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>cn.yiban.open</groupId>
