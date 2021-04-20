@@ -374,7 +374,7 @@
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 		<maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
 		<yiban-sdk.version>1.6.0</yiban-sdk.version>
-		<spring-security-biz.version>1.0.5.RELEASE</spring-security-biz.version>
+		<spring-security-biz.version>1.0.6.RELEASE</spring-security-biz.version>
 	</properties>
 	
 	<dependencyManagement>
