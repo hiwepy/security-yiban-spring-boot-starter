@@ -11,12 +11,7 @@ import org.springframework.security.boot.yiban.authentication.YibanAuthenticatio
 import org.springframework.security.boot.yiban.authentication.YibanMatchedAuthenticationEntryPoint;
 import org.springframework.security.boot.yiban.authentication.YibanMatchedAuthenticationFailureHandler;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.web.session.InvalidSessionStrategy;
-import org.springframework.security.web.session.SessionInformationExpiredStrategy;
-import org.springframework.security.web.session.SimpleRedirectInvalidSessionStrategy;
-import org.springframework.security.web.session.SimpleRedirectSessionInformationExpiredStrategy;
 
 import cn.yiban.open.Authorize;
 
@@ -34,19 +29,6 @@ public class SecurityYibanAutoConfiguration {
 		return new Authorize(authcProperties.getAppKey(), authcProperties.getAppSecret());
 	}
 
-	@Bean("yibanInvalidSessionStrategy")
-	public InvalidSessionStrategy yibanInvalidSessionStrategy(SecurityYibanAuthcProperties authcProperties) {
-		SimpleRedirectInvalidSessionStrategy invalidSessionStrategy = new SimpleRedirectInvalidSessionStrategy(
-				authcProperties.getRedirectUrl());
-		invalidSessionStrategy.setCreateNewSession(authcProperties.getSessionMgt().isAllowSessionCreation());
-		return invalidSessionStrategy;
-	}
-
-	@Bean("yibanExpiredSessionStrategy")
-	public SessionInformationExpiredStrategy yibanExpiredSessionStrategy(SecurityYibanAuthcProperties authcProperties, RedirectStrategy redirectStrategy) {
-		return new SimpleRedirectSessionInformationExpiredStrategy(authcProperties.getRedirectUrl(),
-				redirectStrategy);
-	}
 
 	@Bean("yibanSecurityContextLogoutHandler")
 	public SecurityContextLogoutHandler yibanSecurityContextLogoutHandler(SecurityYibanAuthcProperties authcProperties) {
@@ -57,7 +39,6 @@ public class SecurityYibanAutoConfiguration {
 
 		return logoutHandler;
 	}
- 
 
 	@Bean
 	@ConditionalOnMissingBean

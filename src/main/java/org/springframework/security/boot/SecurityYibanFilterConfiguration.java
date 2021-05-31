@@ -21,6 +21,7 @@ import org.springframework.security.boot.biz.authentication.captcha.CaptchaResol
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationEntryPoint;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationFailureHandler;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationSuccessHandler;
+import org.springframework.security.boot.biz.property.SecuritySessionMgtProperties;
 import org.springframework.security.boot.biz.userdetails.UserDetailsServiceAdapter;
 import org.springframework.security.boot.utils.StringUtils;
 import org.springframework.security.boot.yiban.authentication.YibanAuthenticationProvider;
@@ -75,6 +76,7 @@ public class SecurityYibanFilterConfiguration {
 		public YibanWebSecurityConfigurerAdapter(
 				
 				SecurityBizProperties bizProperties,
+				SecuritySessionMgtProperties sessionMgtProperties,
 				SecurityYibanAuthcProperties authcProperties,
 				
 				ObjectProvider<YibanAuthenticationProvider> authenticationProvider,
@@ -88,7 +90,7 @@ public class SecurityYibanFilterConfiguration {
    				ObjectProvider<ObjectMapper> objectMapperProvider, 
 				ObjectProvider<UserDetailsServiceAdapter> authcUserDetailsService) {
 			
-			super(bizProperties, authcProperties, authenticationProvider.stream().collect(Collectors.toList()),
+			super(bizProperties, authcProperties, sessionMgtProperties, authenticationProvider.stream().collect(Collectors.toList()),
 					authenticationManagerProvider.getIfAvailable());
 			
 			this.authcProperties = authcProperties;
