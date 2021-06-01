@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.security.boot.SecurityFormProperties;
 import org.springframework.security.boot.biz.property.SecurityAuthcProperties;
 import org.springframework.security.boot.biz.property.SecurityLogoutProperties;
 import org.springframework.security.boot.yiban.authentication.YibanAuthorizationProcessingFilter;
@@ -33,7 +32,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 
-@ConfigurationProperties(SecurityFormProperties.PREFIX)
+@ConfigurationProperties(SecurityYibanAuthcProperties.PREFIX)
 @Getter
 @Setter
 @ToString
