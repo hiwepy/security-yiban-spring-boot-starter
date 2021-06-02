@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.boot.biz.authentication.AuthenticationListener;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationEntryPoint;
@@ -19,6 +18,7 @@ import org.springframework.security.boot.biz.authentication.nested.MatchedAuthen
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationSuccessHandler;
 import org.springframework.security.boot.biz.property.SecuritySessionMgtProperties;
 import org.springframework.security.boot.utils.StringUtils;
+import org.springframework.security.boot.utils.WebSecurityUtils;
 import org.springframework.security.boot.yiban.authentication.YibanAuthorizationProcessingFilter;
 import org.springframework.security.boot.yiban.authentication.YibanPreAuthenticatedProcessingFilter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,9 +28,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.savedrequest.RequestCache;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.yiban.open.Authorize;
 
@@ -48,13 +45,12 @@ public class SecurityYibanFilterConfiguration {
 	static class YibanWebSecurityConfigurerAdapter extends WebSecurityBizConfigurerAdapter {
 		
 		private final SecurityYibanAuthcProperties authcProperties;
+		private final Authorize yibanAuthorize;
 
-    	private final LocaleContextFilter localeContextFilter;
+		private final LocaleContextFilter localeContextFilter;
 	    private final AuthenticationEntryPoint authenticationEntryPoint;
 	    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 	    private final AuthenticationFailureHandler authenticationFailureHandler;
-	    private final Authorize yibanAuthorize;
-    	private final RequestCache requestCache;
     	private final RememberMeServices rememberMeServices;
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
 		
@@ -64,33 +60,30 @@ public class SecurityYibanFilterConfiguration {
 				SecuritySessionMgtProperties sessionMgtProperties,
 				SecurityYibanAuthcProperties authcProperties,
 
-   				ObjectProvider<LocaleContextFilter> localeContextProvider,
 				ObjectProvider<Authorize> authorizeProvider,
+				ObjectProvider<LocaleContextFilter> localeContextProvider,
 				ObjectProvider<AuthenticationProvider> authenticationProvider,
-   				ObjectProvider<AuthenticationManager> authenticationManagerProvider,
    				ObjectProvider<AuthenticationListener> authenticationListenerProvider,
    				ObjectProvider<MatchedAuthenticationEntryPoint> authenticationEntryPointProvider,
    				ObjectProvider<MatchedAuthenticationSuccessHandler> authenticationSuccessHandlerProvider,
    				ObjectProvider<MatchedAuthenticationFailureHandler> authenticationFailureHandlerProvider,
-   				ObjectProvider<ObjectMapper> objectMapperProvider,
-   				ObjectProvider<RememberMeServices> rememberMeServicesProvider
+   				ObjectProvider<RememberMeServices> rememberMeServicesProvider,
+   				ObjectProvider<SessionAuthenticationStrategy> sessionAuthenticationStrategyProvider
 				
 				) {
 			
-			super(bizProperties, authcProperties, sessionMgtProperties, authenticationProvider.stream().collect(Collectors.toList()),
-					authenticationManagerProvider.getIfAvailable());
+			super(bizProperties, sessionMgtProperties, authenticationProvider.stream().collect(Collectors.toList()));
 			
 			this.authcProperties = authcProperties;
 
-			this.localeContextFilter = localeContextProvider.getIfAvailable();
 			this.yibanAuthorize = authorizeProvider.getIfAvailable();
-			List<AuthenticationListener> authenticationListeners = authenticationListenerProvider.stream().collect(Collectors.toList());
-   			this.authenticationEntryPoint = super.authenticationEntryPoint(authenticationEntryPointProvider.stream().collect(Collectors.toList()));
-   			this.authenticationSuccessHandler = super.authenticationSuccessHandler(authenticationListeners, authenticationSuccessHandlerProvider.stream().collect(Collectors.toList()));
-   			this.authenticationFailureHandler = super.authenticationFailureHandler(authenticationListeners, authenticationFailureHandlerProvider.stream().collect(Collectors.toList()));
-   			this.requestCache = super.requestCache();
+			this.localeContextFilter = localeContextProvider.getIfAvailable();
+   			List<AuthenticationListener> authenticationListeners = authenticationListenerProvider.stream().collect(Collectors.toList());
+   			this.authenticationEntryPoint = WebSecurityUtils.authenticationEntryPoint(authcProperties, sessionMgtProperties, authenticationEntryPointProvider.stream().collect(Collectors.toList()));
+   			this.authenticationSuccessHandler = WebSecurityUtils.authenticationSuccessHandler(authcProperties, sessionMgtProperties, authenticationListeners, authenticationSuccessHandlerProvider.stream().collect(Collectors.toList()));
+   			this.authenticationFailureHandler = WebSecurityUtils.authenticationFailureHandler(authcProperties, sessionMgtProperties, authenticationListeners, authenticationFailureHandlerProvider.stream().collect(Collectors.toList()));
    			this.rememberMeServices = rememberMeServicesProvider.getIfAvailable();
-   			this.sessionAuthenticationStrategy = super.sessionAuthenticationStrategy();
+   			this.sessionAuthenticationStrategy = sessionAuthenticationStrategyProvider.getIfAvailable();
 		}
 		
 		public YibanPreAuthenticatedProcessingFilter preAuthenticatedProcessingFilter() throws Exception {
@@ -125,15 +118,12 @@ public class SecurityYibanFilterConfiguration {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 
-			http.requestCache()
-	        	.requestCache(requestCache)
-	        	.and()
+			http.antMatcher(authcProperties.getPathPattern())
 	        	.exceptionHandling()
 	        	.authenticationEntryPoint(authenticationEntryPoint)
 	        	.and()
 	        	.httpBasic()
 	        	.disable()
-	        	.antMatcher(authcProperties.getPathPattern())
 	        	.addFilterBefore(localeContextFilter, UsernamePasswordAuthenticationFilter.class)
 	        	.addFilterBefore(preAuthenticatedProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
 	        	.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class); 
