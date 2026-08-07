@@ -12,7 +12,7 @@
     
     <artifactId>security-yiban-spring-boot-starter</artifactId>
     <description>Spring Boot Starter For Spring Security With yiban SDK </description>
-    <version>3.5.x.20260527-SNAPSHOT</version>
+    <version>3.5.x.20260630-SNAPSHOT</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <url>https://github.com/easy-4-java/${project.artifactId}</url>
     <packaging>jar</packaging>
@@ -409,6 +409,7 @@
     </profiles>
     
     <properties>
+        <java.version>17</java.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -423,7 +424,7 @@
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
         <yiban-sdk.version>1.6.0</yiban-sdk.version>
-        <spring-security-biz.version>1.0.9-SNAPSHOT</spring-security-biz.version>
+        <spring-security-biz.version>3.5.x.20260630-SNAPSHOT</spring-security-biz.version>
                 <commons-io.version>2.22.0</commons-io.version>
                 <httpclient.version>4.5.14</httpclient.version>
                 <slf4j.version>2.0.18</slf4j.version>
