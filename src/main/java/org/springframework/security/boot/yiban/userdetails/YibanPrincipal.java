@@ -22,7 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 /**
  *      易班用户基本信息
- * @author ： <a href="https://github.com/hiwepy">wandl</a>
+ * @author [@Loong Wan](https://github.com/loong10k)
  */
 @SuppressWarnings("serial")
 public class YibanPrincipal extends SecurityPrincipal {
