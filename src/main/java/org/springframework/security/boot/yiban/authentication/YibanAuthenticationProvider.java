@@ -54,7 +54,7 @@ public class YibanAuthenticationProvider implements AuthenticationProvider {
  
         String token = (String) authentication.getPrincipal();
         
-		if (!StringUtils.isBlank(token)) {
+		if (StringUtils.isBlank(token)) {
 			logger.debug("No principal found in request.");
 			throw new BadCredentialsException("No principal found in request.");
 		}

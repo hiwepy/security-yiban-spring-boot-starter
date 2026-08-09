@@ -28,7 +28,7 @@ public class YibanAuthenticationToken extends AbstractAuthenticationToken {
     private Object credentials;
 
     public YibanAuthenticationToken(Object principal) {
-        super(null);
+        super((Collection<GrantedAuthority>) null);
         this.principal = principal;
         setAuthenticated(false);
     }

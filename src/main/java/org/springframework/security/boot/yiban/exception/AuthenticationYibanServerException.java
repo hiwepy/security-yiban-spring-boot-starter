@@ -25,7 +25,7 @@ import org.springframework.security.boot.biz.exception.AuthenticationServiceExce
 @SuppressWarnings("serial")
 public class AuthenticationYibanServerException extends AuthenticationServiceExceptionAdapter {
 	
-	final String code;
+	final String yibanCode;
 	
 	// ~ Constructors
 	// ===================================================================================================
@@ -36,9 +36,9 @@ public class AuthenticationYibanServerException extends AuthenticationServiceExc
 	 *
 	 * @param msg the detail message
 	 */
-	public AuthenticationYibanServerException(String code, String msg) {
+	public AuthenticationYibanServerException(String yibanCode, String msg) {
 		super(AuthResponseCode.SC_AUTHZ_THIRD_PARTY_SERVICE, msg);
-		this.code = code;
+		this.yibanCode = yibanCode;
 	}
 
 	/**
@@ -48,13 +48,13 @@ public class AuthenticationYibanServerException extends AuthenticationServiceExc
 	 * @param msg the detail message
 	 * @param t root cause
 	 */
-	public AuthenticationYibanServerException(String code, String msg, Throwable t) {
+	public AuthenticationYibanServerException(String yibanCode, String msg, Throwable t) {
 		super(AuthResponseCode.SC_AUTHZ_THIRD_PARTY_SERVICE, msg, t);
-		this.code = code;
+		this.yibanCode = yibanCode;
 	}
-	
-	public String getCode() {
-		return code;
+
+	public String getYibanCode() {
+		return yibanCode;
 	}
 	
 }

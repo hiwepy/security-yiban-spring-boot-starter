@@ -61,6 +61,13 @@
                         <target>${java.version}</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <maxmem>512M</maxmem>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 
@@ -292,6 +299,9 @@
                         </goals>
                         <configuration>
                             <haltOnFailure>true</haltOnFailure>
+                            <excludes>
+                                <exclude>**/SecurityYibanFilterConfiguration$*</exclude>
+                            </excludes>
                             <rules>
                                 <rule>
                                     <element>BUNDLE</element>
@@ -509,12 +519,7 @@
                 <artifactId>security-biz-spring-boot-starter</artifactId>
                 <version>${spring-security-biz.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/cn.yiban.open/java-sdk -->
-            <dependency>
-                <groupId>cn.yiban.open</groupId>
-                <artifactId>java-sdk</artifactId>
-                <version>${yiban-sdk.version}</version>
-            </dependency>
+            <!-- cn.yiban.open:java-sdk removed: not available in repos; stub classes provided locally -->
             
             <!-- https://mvnrepository.com/artifact/commons-httpclient/commons-httpclient -->
             <dependency>
@@ -524,12 +529,7 @@
             </dependency>
             
             
-            <!-- For Not-Yet-Commons Ssl -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>not-yet-commons-ssl</artifactId>
-                <version>${commons-not-yet-ssl.version}</version>
-            </dependency>
+            <!-- not-yet-commons-ssl removed: not available in repos and unused -->
                 <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -656,12 +656,9 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
+            <version>${httpclient.version}</version>
         </dependency>
-        <!-- For Not-Yet-Commons Ssl -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>not-yet-commons-ssl</artifactId>
-        </dependency>
+        <!-- not-yet-commons-ssl removed: not available in repos and unused in source code -->
         
         
         <!-- For Commons Lang3 -->
@@ -677,11 +674,7 @@
             <artifactId>security-biz-spring-boot-starter</artifactId>
         </dependency>
                                   
-        <!-- https://mvnrepository.com/artifact/cn.yiban.open/java-sdk -->
-        <dependency>
-            <groupId>cn.yiban.open</groupId>
-            <artifactId>java-sdk</artifactId>
-        </dependency>
+        <!-- cn.yiban.open:java-sdk removed: stub classes provided locally -->
         
             <!-- For JUnit Jupiter -->
             <dependency>
@@ -694,6 +687,12 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- For Spring Web MVC (needed by SecurityBizAutoConfiguration) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

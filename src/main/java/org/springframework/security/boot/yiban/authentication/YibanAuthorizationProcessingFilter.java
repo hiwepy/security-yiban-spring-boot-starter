@@ -37,7 +37,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.CollectionUtils;
 
@@ -59,12 +59,12 @@ public class YibanAuthorizationProcessingFilter extends PostOnlyAuthenticationPr
 	private final Authorize authorize;
 	
 	public YibanAuthorizationProcessingFilter(Authorize authorize) {
-		super(new AntPathRequestMatcher(AUTHORIZATION_PATH));
+		super(PathPatternRequestMatcher.pathPattern(AUTHORIZATION_PATH));
 		this.authorize = authorize;
 	}
 	
 	public YibanAuthorizationProcessingFilter(Authorize authorize, List<String> ignorePatterns) {
-		super(new AntPathRequestMatcher(AUTHORIZATION_PATH));
+		super(PathPatternRequestMatcher.pathPattern(AUTHORIZATION_PATH));
 		this.setIgnoreRequestMatcher(ignorePatterns);
 		this.authorize = authorize;
 	}
@@ -172,7 +172,7 @@ public class YibanAuthorizationProcessingFilter extends PostOnlyAuthenticationPr
 	public void setIgnoreRequestMatcher(List<String> ignorePatterns) {
 		if(!CollectionUtils.isEmpty(ignorePatterns)) {
 			this.ignoreRequestMatchers = ignorePatterns.stream().map(pattern -> {
-				return new AntPathRequestMatcher(pattern);
+				return (RequestMatcher) PathPatternRequestMatcher.pathPattern(pattern);
 			}).collect(Collectors.toList());
 		}
 	}

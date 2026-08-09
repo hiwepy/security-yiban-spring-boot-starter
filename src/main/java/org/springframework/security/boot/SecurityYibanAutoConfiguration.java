@@ -18,7 +18,7 @@ import cn.yiban.open.Authorize;
 @Configuration
 @AutoConfigureBefore(SecurityBizAutoConfiguration.class)
 @ConditionalOnProperty(prefix = SecurityYibanProperties.PREFIX, value = "enabled", havingValue = "true")
-@EnableConfigurationProperties({ SecurityYibanProperties.class })
+@EnableConfigurationProperties({ SecurityYibanProperties.class, SecurityYibanAuthcProperties.class })
 public class SecurityYibanAutoConfiguration {
 
 	/**
