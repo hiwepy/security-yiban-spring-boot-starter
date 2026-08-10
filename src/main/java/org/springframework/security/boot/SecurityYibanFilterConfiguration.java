@@ -36,7 +36,7 @@ import cn.yiban.open.Authorize;
  * Only active when {@code spring.security.yiban.enabled=true} and running
  * in a servlet web application.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 @Configuration
 @AutoConfigureBefore(name = {

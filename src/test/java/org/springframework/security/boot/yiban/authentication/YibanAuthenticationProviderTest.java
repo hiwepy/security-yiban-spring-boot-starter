@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link YibanAuthenticationProvider}.
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 @ExtendWith(MockitoExtension.class)
 class YibanAuthenticationProviderTest {

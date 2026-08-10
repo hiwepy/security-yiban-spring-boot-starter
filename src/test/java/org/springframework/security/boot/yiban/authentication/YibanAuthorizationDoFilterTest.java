@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Tests for the doFilter method of {@link YibanAuthorizationProcessingFilter}.
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 @ExtendWith(MockitoExtension.class)
 class YibanAuthorizationDoFilterTest {

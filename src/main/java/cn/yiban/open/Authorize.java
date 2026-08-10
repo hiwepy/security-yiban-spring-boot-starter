@@ -2,7 +2,7 @@ package cn.yiban.open;
 
 /**
  * Stub class for cn.yiban.open.Authorize (yiban SDK not available in public repos).
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 public class Authorize {
 

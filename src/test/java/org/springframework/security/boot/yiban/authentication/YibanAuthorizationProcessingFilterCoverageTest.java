@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Additional coverage tests for {@link YibanAuthorizationProcessingFilter}.
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 @ExtendWith(MockitoExtension.class)
 class YibanAuthorizationProcessingFilterCoverageTest {
