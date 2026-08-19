@@ -47,6 +47,7 @@ import cn.yiban.open.Authorize;
  * Jwt授权 (authorization)过滤器
  * 
  * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
  */
 public class YibanAuthorizationProcessingFilter extends PostOnlyAuthenticationProcessingFilter {
 	
@@ -58,17 +59,35 @@ public class YibanAuthorizationProcessingFilter extends PostOnlyAuthenticationPr
 	private SessionAuthenticationStrategy sessionStrategy = new NullAuthenticatedSessionStrategy();
 	private final Authorize authorize;
 	
+	/**
+	 * Constructs a new yiban authorization processing filter instance.
+	 *
+	 * @param authorize the authorize
+	 */
 	public YibanAuthorizationProcessingFilter(Authorize authorize) {
 		super(PathPatternRequestMatcher.pathPattern(AUTHORIZATION_PATH));
 		this.authorize = authorize;
 	}
 	
+	/**
+	 * Constructs a new yiban authorization processing filter instance.
+	 *
+	 * @param authorize the authorize
+	 * @param ignorePatterns the ignore patterns
+	 */
 	public YibanAuthorizationProcessingFilter(Authorize authorize, List<String> ignorePatterns) {
 		super(PathPatternRequestMatcher.pathPattern(AUTHORIZATION_PATH));
 		this.setIgnoreRequestMatcher(ignorePatterns);
 		this.authorize = authorize;
 	}
 
+	/**
+	 * Determines whether requires authentication.
+	 *
+	 * @param request the request
+	 * @param response the response
+	 * @return the result
+	 */
 	@Override
 	protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
 		// 忽略部分请求
@@ -83,6 +102,13 @@ public class YibanAuthorizationProcessingFilter extends PostOnlyAuthenticationPr
 		return super.requiresAuthentication(request, response);
 	}
 
+	/**
+	 * do Filter.
+	 *
+	 * @param req the req
+	 * @param res the res
+	 * @param chain the chain
+	 */
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
@@ -132,6 +158,11 @@ public class YibanAuthorizationProcessingFilter extends PostOnlyAuthenticationPr
 		
 	}
 	
+	/**
+	 * Sets the session authentication strategy.
+	 *
+	 * @param sessionStrategy the session strategy
+	 */
 	@Override
 	public void setSessionAuthenticationStrategy(
 			SessionAuthenticationStrategy sessionStrategy) {
@@ -139,6 +170,13 @@ public class YibanAuthorizationProcessingFilter extends PostOnlyAuthenticationPr
 		this.sessionStrategy = sessionStrategy;
 	}
 	
+	/**
+	 * do Attempt Authentication.
+	 *
+	 * @param request the request
+	 * @param response the response
+	 * @return the result
+	 */
 	@Override
 	public Authentication doAttemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException, IOException, ServletException {
@@ -165,10 +203,21 @@ public class YibanAuthorizationProcessingFilter extends PostOnlyAuthenticationPr
 		return this.getAuthenticationManager().authenticate(authRequest);
 	}
 
+	/**
+	 * set Details.
+	 *
+	 * @param request the request
+	 * @param authRequest the auth request
+	 */
 	protected void setDetails(HttpServletRequest request, AbstractAuthenticationToken authRequest) {
 		authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
 	}
 	
+	/**
+	 * Sets the ignore request matcher.
+	 *
+	 * @param ignorePatterns the ignore patterns
+	 */
 	public void setIgnoreRequestMatcher(List<String> ignorePatterns) {
 		if(!CollectionUtils.isEmpty(ignorePatterns)) {
 			this.ignoreRequestMatchers = ignorePatterns.stream().map(pattern -> {
@@ -177,14 +226,29 @@ public class YibanAuthorizationProcessingFilter extends PostOnlyAuthenticationPr
 		}
 	}
 	
+	/**
+	 * Sets the ignore request matchers.
+	 *
+	 * @param ignoreRequestMatchers the ignore request matchers
+	 */
 	public void setIgnoreRequestMatchers(RequestMatcher ...ignoreRequestMatchers) {
 		this.ignoreRequestMatchers = Arrays.asList(ignoreRequestMatchers);
 	}
 
+	/**
+	 * Returns the authorization param name.
+	 *
+	 * @return the authorization param name
+	 */
 	public String getAuthorizationParamName() {
 		return authorizationParamName;
 	}
 
+	/**
+	 * Sets the authorization param name.
+	 *
+	 * @param authorizationParamName the authorization param name
+	 */
 	public void setAuthorizationParamName(String authorizationParamName) {
 		this.authorizationParamName = authorizationParamName;
 	}

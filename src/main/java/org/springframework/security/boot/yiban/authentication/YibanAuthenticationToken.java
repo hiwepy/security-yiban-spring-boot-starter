@@ -20,6 +20,12 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
 
+/**
+ * <p>Token for Yiban Authentication.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class YibanAuthenticationToken extends AbstractAuthenticationToken {
     
     private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
@@ -27,12 +33,24 @@ public class YibanAuthenticationToken extends AbstractAuthenticationToken {
     private final Object principal;
     private Object credentials;
 
+    /**
+     * Constructs a new yiban authentication token instance.
+     *
+     * @param principal the principal
+     */
     public YibanAuthenticationToken(Object principal) {
         super((Collection<GrantedAuthority>) null);
         this.principal = principal;
         setAuthenticated(false);
     }
     
+    /**
+     * Constructs a new yiban authentication token instance.
+     *
+     * @param principal the principal
+     * @param credentials the credentials
+     * @param authorities the authorities
+     */
     public YibanAuthenticationToken(Object principal,  Object credentials, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = principal;
@@ -43,14 +61,30 @@ public class YibanAuthenticationToken extends AbstractAuthenticationToken {
     // ~ Methods
     // ========================================================================================================
 
+    /**
+     * Returns the credentials.
+     *
+     * @return the credentials
+     */
     public Object getCredentials() {
         return this.credentials;
     }
 
+    /**
+     * Returns the principal.
+     *
+     * @return the principal
+     */
     public Object getPrincipal() {
         return this.principal;
     }
 
+    /**
+     * Sets the authenticated.
+     *
+     * @param isAuthenticated the is authenticated
+     * @throws IllegalArgumentException if an error occurs
+     */
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
         if (isAuthenticated) {
             throw new IllegalArgumentException(
@@ -60,6 +94,10 @@ public class YibanAuthenticationToken extends AbstractAuthenticationToken {
         super.setAuthenticated(false);
     }
 
+    /**
+     * erase Credentials.
+     *
+     */
     @Override
     public void eraseCredentials() {
         super.eraseCredentials();

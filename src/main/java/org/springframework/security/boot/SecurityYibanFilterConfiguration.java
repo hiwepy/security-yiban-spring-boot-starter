@@ -42,6 +42,12 @@ import cn.yiban.open.Authorize;
 @AutoConfigureBefore(name = {
 	"org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
 })
+/**
+ * <p>Configuration properties.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 @ConditionalOnWebApplication
 @ConditionalOnProperty(prefix = SecurityYibanProperties.PREFIX, value = "enabled", havingValue = "true")
 @EnableConfigurationProperties({ SecurityYibanProperties.class, SecurityBizProperties.class })
@@ -93,6 +99,12 @@ public class SecurityYibanFilterConfiguration {
 			this.sessionAuthenticationStrategy = sessionAuthenticationStrategyProvider.getIfAvailable();
 		}
 
+		/**
+		 * pre Authenticated Processing Filter.
+		 *
+		 * @return the result
+		 * @throws Exception if an error occurs
+		 */
 		public YibanPreAuthenticatedProcessingFilter preAuthenticatedProcessingFilter() throws Exception {
 
 			YibanPreAuthenticatedProcessingFilter authcFilter = new YibanPreAuthenticatedProcessingFilter( yibanAuthorize,
@@ -103,6 +115,12 @@ public class SecurityYibanFilterConfiguration {
 			return authcFilter;
 		}
 
+		/**
+		 * authentication Processing Filter.
+		 *
+		 * @return the result
+		 * @throws Exception if an error occurs
+		 */
 		public YibanAuthorizationProcessingFilter authenticationProcessingFilter() throws Exception {
 
 			YibanAuthorizationProcessingFilter authcFilter = new YibanAuthorizationProcessingFilter(yibanAuthorize);
@@ -122,6 +140,12 @@ public class SecurityYibanFilterConfiguration {
 			return authcFilter;
 		}
 
+		/**
+		 * configure.
+		 *
+		 * @param http the http
+		 * @throws Exception if an error occurs
+		 */
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 

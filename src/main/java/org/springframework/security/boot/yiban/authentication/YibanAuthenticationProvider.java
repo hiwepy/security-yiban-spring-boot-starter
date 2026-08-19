@@ -24,6 +24,12 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.yiban.open.common.User;
 
+/**
+ * <p>Provider for Yiban Authentication.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class YibanAuthenticationProvider implements AuthenticationProvider {
 	
 	protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
@@ -31,6 +37,11 @@ public class YibanAuthenticationProvider implements AuthenticationProvider {
     private final UserDetailsServiceAdapter userDetailsService;
     private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
     
+    /**
+     * Constructs a new yiban authentication provider instance.
+     *
+     * @param userDetailsService the user details service
+     */
     public YibanAuthenticationProvider(final UserDetailsServiceAdapter userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
@@ -115,19 +126,40 @@ public class YibanAuthenticationProvider implements AuthenticationProvider {
         return authenticationToken;
     }
 
+    /**
+     * Determines whether supports.
+     *
+     * @param authentication the authentication
+     * @return the result
+     */
     @Override
     public boolean supports(Class<?> authentication) {
         return (YibanAuthenticationToken.class.isAssignableFrom(authentication));
     }
 
+	/**
+	 * Sets the user details checker.
+	 *
+	 * @param userDetailsChecker the user details checker
+	 */
 	public void setUserDetailsChecker(UserDetailsChecker userDetailsChecker) {
 		this.userDetailsChecker = userDetailsChecker;
 	}
 
+	/**
+	 * Returns the user details checker.
+	 *
+	 * @return the user details checker
+	 */
 	public UserDetailsChecker getUserDetailsChecker() {
 		return userDetailsChecker;
 	}
 
+	/**
+	 * Returns the user details service.
+	 *
+	 * @return the user details service
+	 */
 	public UserDetailsServiceAdapter getUserDetailsService() {
 		return userDetailsService;
 	}

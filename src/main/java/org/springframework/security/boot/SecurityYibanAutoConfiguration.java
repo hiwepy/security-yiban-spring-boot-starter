@@ -15,6 +15,12 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 
 import cn.yiban.open.Authorize;
 
+/**
+ * <p>Configuration properties.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 @Configuration
 @AutoConfigureBefore(SecurityBizAutoConfiguration.class)
 @ConditionalOnProperty(prefix = SecurityYibanProperties.PREFIX, value = "enabled", havingValue = "true")
@@ -30,6 +36,12 @@ public class SecurityYibanAutoConfiguration {
 	}
 
 
+	/**
+	 * yiban Security Context Logout Handler.
+	 *
+	 * @param authcProperties the authc properties
+	 * @return the result
+	 */
 	@Bean("yibanSecurityContextLogoutHandler")
 	public SecurityContextLogoutHandler yibanSecurityContextLogoutHandler(SecurityYibanAuthcProperties authcProperties) {
 
@@ -40,18 +52,35 @@ public class SecurityYibanAutoConfiguration {
 		return logoutHandler;
 	}
 
+	/**
+	 * yiban Matched Authentication Entry Point.
+	 *
+	 * @return the result
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public YibanMatchedAuthenticationEntryPoint yibanMatchedAuthenticationEntryPoint() {
 		return new YibanMatchedAuthenticationEntryPoint();
 	}
 
+	/**
+	 * yiban Matched Authentication Failure Handler.
+	 *
+	 * @return the result
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public YibanMatchedAuthenticationFailureHandler yibanMatchedAuthenticationFailureHandler() {
 		return new YibanMatchedAuthenticationFailureHandler();
 	}
 
+	/**
+	 * yiban Authentication Provider.
+	 *
+	 * @param userDetailsService the user details service
+	 * @param passwordEncoder the password encoder
+	 * @return the result
+	 */
 	@Bean
 	public YibanAuthenticationProvider yibanAuthenticationProvider(UserDetailsServiceAdapter userDetailsService,
 			PasswordEncoder passwordEncoder) {

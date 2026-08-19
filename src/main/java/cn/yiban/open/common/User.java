@@ -3,11 +3,17 @@ package cn.yiban.open.common;
 /**
  * Stub class for cn.yiban.open.common.User (yiban SDK not available in public repos).
  * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
  */
 public class User {
 
     private final String token;
 
+    /**
+     * Constructs a new user instance.
+     *
+     * @param token the token
+     */
     public User(String token) {
         this.token = token;
     }

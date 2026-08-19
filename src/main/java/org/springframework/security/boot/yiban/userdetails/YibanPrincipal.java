@@ -23,6 +23,7 @@ import org.springframework.security.core.GrantedAuthority;
 /**
  *      易班用户基本信息
  * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
  */
 @SuppressWarnings("serial")
 public class YibanPrincipal extends SecurityPrincipal {
@@ -68,64 +69,149 @@ public class YibanPrincipal extends SecurityPrincipal {
 	 */
 	protected String identity;
 	
+	/**
+	 * Constructs a new yiban principal instance.
+	 *
+	 * @param username the username
+	 * @param password the password
+	 * @param roles the roles
+	 */
 	public YibanPrincipal(String username, String password, String... roles) {
 		super(username, password, roles);
 	}
 
+	/**
+	 * Constructs a new yiban principal instance.
+	 *
+	 * @param username the username
+	 * @param password the password
+	 * @param authorities the authorities
+	 */
 	public YibanPrincipal(String username, String password, Collection<? extends GrantedAuthority> authorities) {
 		super(username, password, authorities);
 	}
 
+	/**
+	 * Constructs a new yiban principal instance.
+	 *
+	 * @param username the username
+	 * @param password the password
+	 * @param enabled the enabled
+	 * @param accountNonExpired the account non expired
+	 * @param credentialsNonExpired the credentials non expired
+	 * @param accountNonLocked the account non locked
+	 * @param authorities the authorities
+	 */
 	public YibanPrincipal(String username, String password, boolean enabled, boolean accountNonExpired,
 			boolean credentialsNonExpired, boolean accountNonLocked,
 			Collection<? extends GrantedAuthority> authorities) {
 		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 	}
 
+	/**
+	 * Returns the yb uid.
+	 *
+	 * @return the yb uid
+	 */
 	public String getYbUid() {
 		return ybUid;
 	}
 
+	/**
+	 * Sets the yb uid.
+	 *
+	 * @param ybUid the yb uid
+	 */
 	public void setYbUid(String ybUid) {
 		this.ybUid = ybUid;
 	}
 
+	/**
+	 * Returns the money.
+	 *
+	 * @return the money
+	 */
 	public String getMoney() {
 		return money;
 	}
 
+	/**
+	 * Sets the money.
+	 *
+	 * @param money the money
+	 */
 	public void setMoney(String money) {
 		this.money = money;
 	}
 
+	/**
+	 * Returns the exp.
+	 *
+	 * @return the exp
+	 */
 	public String getExp() {
 		return exp;
 	}
 
+	/**
+	 * Sets the exp.
+	 *
+	 * @param exp the exp
+	 */
 	public void setExp(String exp) {
 		this.exp = exp;
 	}
 
+	/**
+	 * Returns the userhead.
+	 *
+	 * @return the userhead
+	 */
 	public String getUserhead() {
 		return userhead;
 	}
 
+	/**
+	 * Sets the userhead.
+	 *
+	 * @param userhead the userhead
+	 */
 	public void setUserhead(String userhead) {
 		this.userhead = userhead;
 	}
 
+	/**
+	 * Returns the schoolid.
+	 *
+	 * @return the schoolid
+	 */
 	public String getSchoolid() {
 		return schoolid;
 	}
 
+	/**
+	 * Sets the schoolid.
+	 *
+	 * @param schoolid the schoolid
+	 */
 	public void setSchoolid(String schoolid) {
 		this.schoolid = schoolid;
 	}
 
+	/**
+	 * Returns the schoolname.
+	 *
+	 * @return the schoolname
+	 */
 	public String getSchoolname() {
 		return schoolname;
 	}
 
+	/**
+	 * Sets the schoolname.
+	 *
+	 * @param schoolname the schoolname
+	 */
 	public void setSchoolname(String schoolname) {
 		this.schoolname = schoolname;
 	}

@@ -30,6 +30,12 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 import cn.yiban.open.Authorize;
 import cn.yiban.open.Authorize.DISPLAY_TAG_T;
 
+/**
+ * <p>Filter for Yiban Pre Authenticated Processing.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class YibanPreAuthenticatedProcessingFilter extends AbstractPreAuthenticatedProcessingFilter {
 
     private final Authorize authorize;
@@ -37,6 +43,14 @@ public class YibanPreAuthenticatedProcessingFilter extends AbstractPreAuthentica
     private final String state;
     private final Authorize.DISPLAY_TAG_T display;
     
+	/**
+	 * Constructs a new yiban pre authenticated processing filter instance.
+	 *
+	 * @param authorize the authorize
+	 * @param redirect_uri the redirect_uri
+	 * @param state the state
+	 * @param display the display
+	 */
 	public YibanPreAuthenticatedProcessingFilter(Authorize authorize, String redirect_uri, String state,
 			DISPLAY_TAG_T display) {
 		super();
@@ -46,6 +60,13 @@ public class YibanPreAuthenticatedProcessingFilter extends AbstractPreAuthentica
 		this.display = display;
 	}
 
+	/**
+	 * do Filter.
+	 *
+	 * @param request the request
+	 * @param response the response
+	 * @param chain the chain
+	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -57,10 +78,22 @@ public class YibanPreAuthenticatedProcessingFilter extends AbstractPreAuthentica
 		
 	}
 
+	/**
+	 * get Pre Authenticated Principal.
+	 *
+	 * @param httpRequest the http request
+	 * @return the result
+	 */
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest httpRequest) {
 		return "N/A";
 	}
 
+	/**
+	 * get Pre Authenticated Credentials.
+	 *
+	 * @param httpRequest the http request
+	 * @return the result
+	 */
 	protected Object getPreAuthenticatedCredentials(HttpServletRequest httpRequest) {
 		return "N/A";
 	}

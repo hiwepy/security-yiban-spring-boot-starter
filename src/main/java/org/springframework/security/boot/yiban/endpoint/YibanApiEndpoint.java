@@ -10,6 +10,12 @@ import cn.yiban.open.Authorize;
 import cn.yiban.open.Authorize.DISPLAY_TAG_T;
 
 
+/**
+ * <p>Yiban API Endpoint.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 @RestController("/yiban/api/")
 public class YibanApiEndpoint {
 	
@@ -18,6 +24,14 @@ public class YibanApiEndpoint {
     private final String state;
     private final Authorize.DISPLAY_TAG_T display;
     
+	/**
+	 * Constructs a new yiban api endpoint instance.
+	 *
+	 * @param authorize the authorize
+	 * @param redirect_uri the redirect_uri
+	 * @param state the state
+	 * @param display the display
+	 */
 	public YibanApiEndpoint(Authorize authorize, String redirect_uri, String state,
 			DISPLAY_TAG_T display) {
 		super();
@@ -27,6 +41,12 @@ public class YibanApiEndpoint {
 		this.display = display;
 	}
 	 
+	/**
+	 * list.
+	 *
+	 * @return the result
+	 * @throws Exception if an error occurs
+	 */
 	@GetMapping("login")
 	public ResponseEntity<String> list() throws Exception {
 		
